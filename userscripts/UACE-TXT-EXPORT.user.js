@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UACE TXT-EXPORT — Экспорт страницы в текст (ПОЛИГОН)
 // @namespace    local.universal.ai.exporter
-// @version      1.0.1
+// @version      1.0.2
 // @updateURL    https://rtynbirf.github.io/uace-polymat/userscripts/UACE-TXT-EXPORT.user.js
 // @downloadURL  https://rtynbirf.github.io/uace-polymat/userscripts/UACE-TXT-EXPORT.user.js
 // @description  ПОЛИГОН ОДНОЙ ФУНКЦИИ (доводим до релиза): экспорт ТЕКУЩЕЙ страницы в .txt на ВСЕХ сайтах и ВСЕХ страницах. Одна горячая клавиша Alt+T или чёрно-золотая пилюля «TXT» справа внизу: выбор основного контейнера по уликам (main/article/role=main/плотность), обход блоков (заголовки/абзацы/списки/таблицы/pre/цитаты), гигиена шума (script/style/nav/footer/aside/ARIA-роли/скрытые), Shadow DOM без границ, дедупликация длинных повторов, честная статистика (символы/слова/блоки/дубликаты/время захвата), FNV-1a 32 целостность, бюджет узлов/времени с честной обрезкой. 0 внешних запросов (0 сеть), никаких заглушек: кнопка РЕАЛЬНО сохраняет .txt. Журнал [TXT] кольцо 200, selftest чистого ядра. Л0-ядро Node-тестируемое (window.__UACE_TXT__).
@@ -37,7 +37,7 @@
    *      страничная часть L1 — тонкий мост (hotkey + пилюля + скачивание).
    * ========================================================================== */
 
-  var VER = '1.0.0';
+  var VER = '1.0.2';
   var JOURNAL_CAP = 200;          /* кольцо журнала [TXT] */
   var MAX_NODES = 30000;          /* бюджет узлов TreeWalker за захват */
   var MAX_BLOCKS = 8000;          /* бюджет блоков результата */
@@ -298,8 +298,24 @@
         continue;
       }
       if (tag === 'TR') {
-        var rt = rowText(el);
-        if (rt) pushBlock(ctx, 'row', rt);
+        /* Ячейка с вложенными блочными детьми (вложенная таблица/список) —
+           спускаемся ПО ЯЧЕЙКАМ (улика Hacker News 2026-11-10: itemlist был
+           одной гигантской строкой через textContent). Плоские ячейки —
+           как раньше: одна строка-ряд через rowText. */
+        var cells = [];
+        var tkids = el.children || [];
+        for (var ti = 0; ti < tkids.length; ti++) {
+          var tt = String(tkids[ti].tagName || '').toUpperCase();
+          if (tt === 'TD' || tt === 'TH') cells.push(tkids[ti]);
+        }
+        var nestedCell = false;
+        for (var tn = 0; tn < cells.length; tn++) { if (hasBlockChild(cells[tn])) { nestedCell = true; break; } }
+        if (nestedCell) {
+          for (var tc = 0; tc < cells.length; tc++) { collectBlocks(cells[tc], ctx, depth + 1, quote); }
+        } else {
+          var rt = rowText(el);
+          if (rt) pushBlock(ctx, 'row', rt);
+        }
         continue;
       }
       if (tag === 'TABLE' || tag === 'THEAD' || tag === 'TBODY' || tag === 'TFOOT') {
@@ -336,7 +352,12 @@
         }
         continue;
       }
-      /* инлайн/прочее: текст соберётся блоком-предком (ownText) — сюда не лезем */
+      /* Легаси/неизвестные контейнеры (CENTER, FONT и пр.): спускаемся, если
+         внутри есть блочные дети (улика Hacker News 2026-11-10: body>center>
+         table>tbody>tr давала 0 блоков). Инлайн без блочных детей, как и
+         раньше, честно собирается блоком-предком через ownText. */
+      if (hasBlockChild(el)) { collectBlocks(el, ctx, depth + 1, quote); }
+      continue;
     }
   }
 

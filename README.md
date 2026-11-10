@@ -13,8 +13,9 @@
 | Продукт | Тип | Версия | SHA-256 (первые байты) | Установка |
 |---|---|---|---|---|
 | **POLYMAT UNIFIED** | юзерскрипт | v34.3.2 | `18d32676…9e3d48` | [клик-установка](https://rtynbirf.github.io/uace-polymat/userscripts/UACE-POLYMAT-UNIFIED-v34.3.2.user.js) |
-| **TXT-EXPORT** (полигон первенца) | юзерскрипт | 1.0.1 | `8b7377de…4bae` | [клик-установка (стабильный канал)](https://rtynbirf.github.io/uace-polymat/userscripts/UACE-TXT-EXPORT.user.js) — **с 1.0.1 канал автообновления работает** |
+| **TXT-EXPORT** (полигон первенца) | юзерскрипт | 1.0.2 | `2e78e6b6…1dde` | [клик-установка (стабильный канал)](https://rtynbirf.github.io/uace-polymat/userscripts/UACE-TXT-EXPORT.user.js) — автообновление активно |
 | **Cookie Vault** | Chrome-расширение (MV3) | 3.0.1 | `b643fa3d…f269` | [Release ZIP](https://github.com/rtynbirf/uace-polymat/releases) → распаковать → `chrome://extensions` → «Загрузить распакованное» |
+| **POLYMAT UNIFIED** (бета-канал) | юзерскрипт | v34.4.0-BETA4 | `65a3782a…437` | [пре-релиз через тег](https://github.com/rtynbirf/uace-polymat/releases) — для испытаний, не для боевой работы |
 
 > TXT-EXPORT: на любом сайте **Alt+T** или пилюля «TXT» справа внизу → честный `.txt` страницы
 > (Shadow DOM без границ, гигиена шума, дедупликация, FNV-1a целостность, 0 сеть).
@@ -29,7 +30,8 @@
 6. **SHA-256** — hashlib и sha256sum кросс-сверка; дайджесты публикуются в Release.
 
 CI выполняет пункты 2–4 на каждом пуше: [actions/workflows/ci.yml](.github/workflows/ci.yml).
-**Релизы собираются CI автоматически**: тег `v*` / `txt-export-v*` → [release.yml](.github/workflows/release.yml) верифицирует, пакует детерминированный ZIP, кладёт `checksums.txt` и публикует Release через gh CLI. Все действия запинены по коммит-SHA. Дифф-доказательство релиза 1.0.1: только 3 строки метаданных (@version + @updateURL + @downloadURL), рельсы 30/0.
+**Релизы собираются CI автоматически**: тег `v*` / `txt-export-v*` → [release.yml](.github/workflows/release.yml) верифицирует, пакует детерминированный ZIP, генерирует CHANGELOG из Conventional Commits ([tools/gen_changelog.py](tools/gen_changelog.py)), кладёт `checksums.txt` и публикует Release через gh CLI; теги с `-BETA/-RC` публикуются как пре-релизы. Все действия запинены по коммит-SHA.
+**Релиз 1.0.2 — доводка по живому полигону** (настоящий Chromium, реальный клик, реальные загрузки): КОРЕНЬ-1 `@version==VER` (страж в рельсах), КОРЕНЬ-2 легаси-контейнеры (Hacker News давал 0 блоков), КОРЕНЬ-3 вложенные таблицы в ячейках (itemlist глотался одной строкой). Итог: HN 62 блока/3 мс, Википедия 848 блоков/46 мс, рельсы 32/0.
 
 ## Cookie Vault 3.0.1 — криптосхема
 

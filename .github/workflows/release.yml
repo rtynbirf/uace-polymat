@@ -52,8 +52,9 @@ jobs:
             --arcroot cookie-vault-3.0.1
           cp userscripts/UACE-TXT-EXPORT-*.user.js dist/
           cp userscripts/UACE-POLYMAT-UNIFIED-*.user.js dist/
+          python tools/gen_changelog.py --tag "${GITHUB_REF_NAME:-}" --out dist/CHANGELOG.md
           cd dist
-          sha256sum UACE-TXT-EXPORT-*.user.js UACE-POLYMAT-UNIFIED-*.user.js Cookie-Vault-3.0.1-production.zip > checksums.txt
+          sha256sum UACE-TXT-EXPORT-*.user.js UACE-POLYMAT-UNIFIED-*.user.js Cookie-Vault-3.0.1-production.zip CHANGELOG.md > checksums.txt
           cat checksums.txt
 
       - name: PUBLISH — GitHub Release (gh CLI, официальный инструмент)
@@ -66,14 +67,19 @@ jobs:
           NOTES="Автоматический релиз, собранный CI из тега ${TAG}.
           Цепочка канона пройдена в CI: node --check → validate.py (73 проверки) → crypto_smoke (8 тестов) → детерминированный ZIP → testzip побайтово.
           SHA-256 всех артефактов — в checksums.txt (GitHub дополнительно печатает дайджест каждого ассета).
+          CHANGELOG сгенерирован из истории коммитов (Conventional Commits).
           Установка юзерскриптов одним кликом: https://rtynbirf.github.io/uace-polymat/
           Cookie Vault (MV3): скачать ZIP → распаковать → chrome://extensions → «Режим разработчика» → «Загрузить распакованное».
           0 сетевых запросов · 0 заглушек · функции исполняются по-настоящему."
+          case "$TAG" in
+            *-BETA*|*-RC*|*-alpha*|*-beta*) PR="--prerelease" ;;
+            *) PR="" ;;
+          esac
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
             gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
             echo "Релиз $TAG уже существовал — артефакты обновлены (clobber)"
           else
-            gh release create "$TAG" dist/* \
+            gh release create "$TAG" dist/* $PR \
               --repo "$GITHUB_REPOSITORY" \
               --title "$TITLE" \
               --notes "$NOTES"
