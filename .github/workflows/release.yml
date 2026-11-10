@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'txt-export-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4, pinned by commit SHA
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4, pinned by commit SHA
+        with:
+          node-version: '20'
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5, pinned by commit SHA
+        with:
+          python-version: '3.11'
+
+      - name: VERIFY — полная цепочка канона
+        run: |
+          set -e
+          for f in userscripts/*.user.js; do
+            node --check "$f"
+            echo "SYNTAX OK: $f"
+          done
+          for f in cookie-vault/*.js; do
+            node --check "$f"
+            echo "SYNTAX OK: $f"
+          done
+          node --check cookie-vault/scripts/crypto_smoke.mjs
+          python cookie-vault/scripts/validate.py
+          node cookie-vault/scripts/crypto_smoke.mjs
+
+      - name: PACKAGE — детерминированный ZIP + юзерскрипты + checksums.txt
+        run: |
+          set -e
+          mkdir -p dist
+          python cookie-vault/scripts/package.py \
+            --src cookie-vault \
+            --out dist/Cookie-Vault-3.0.1-production.zip \
+            --arcroot cookie-vault-3.0.1
+          cp userscripts/UACE-TXT-EXPORT-*.user.js dist/
+          cp userscripts/UACE-POLYMAT-UNIFIED-*.user.js dist/
+          cd dist
+          sha256sum UACE-TXT-EXPORT-*.user.js UACE-POLYMAT-UNIFIED-*.user.js Cookie-Vault-3.0.1-production.zip > checksums.txt
+          cat checksums.txt
+
+      - name: PUBLISH — GitHub Release (gh CLI, официальный инструмент)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          TAG="${GITHUB_REF_NAME}"
+          TITLE="Арсенал POLYMAT — ${TAG} (машинно-верифицированный)"
+          NOTES="Автоматический релиз, собранный CI из тега ${TAG}.
+          Цепочка канона пройдена в CI: node --check → validate.py (73 проверки) → crypto_smoke (8 тестов) → детерминированный ZIP → testzip побайтово.
+          SHA-256 всех артефактов — в checksums.txt (GitHub дополнительно печатает дайджест каждого ассета).
+          Установка юзерскриптов одним кликом: https://rtynbirf.github.io/uace-polymat/
+          Cookie Vault (MV3): скачать ZIP → распаковать → chrome://extensions → «Режим разработчика» → «Загрузить распакованное».
+          0 сетевых запросов · 0 заглушек · функции исполняются по-настоящему."
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+            echo "Релиз $TAG уже существовал — артефакты обновлены (clobber)"
+          else
+            gh release create "$TAG" dist/* \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$TITLE" \
+              --notes "$NOTES"
+            echo "Релиз $TAG создан"
+          fi

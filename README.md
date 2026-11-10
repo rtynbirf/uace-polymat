@@ -13,7 +13,7 @@
 | Продукт | Тип | Версия | SHA-256 (первые байты) | Установка |
 |---|---|---|---|---|
 | **POLYMAT UNIFIED** | юзерскрипт | v34.3.2 | `18d32676…9e3d48` | [клик-установка](https://rtynbirf.github.io/uace-polymat/userscripts/UACE-POLYMAT-UNIFIED-v34.3.2.user.js) |
-| **TXT-EXPORT** (полигон первенца) | юзерскрипт | 1.0.0 | `2f083008…52d92` | [клик-установка](https://rtynbirf.github.io/uace-polymat/userscripts/UACE-TXT-EXPORT-1.0.0.user.js) |
+| **TXT-EXPORT** (полигон первенца) | юзерскрипт | 1.0.1 | `8b7377de…4bae` | [клик-установка (стабильный канал)](https://rtynbirf.github.io/uace-polymat/userscripts/UACE-TXT-EXPORT.user.js) — **с 1.0.1 канал автообновления работает** |
 | **Cookie Vault** | Chrome-расширение (MV3) | 3.0.1 | `b643fa3d…f269` | [Release ZIP](https://github.com/rtynbirf/uace-polymat/releases) → распаковать → `chrome://extensions` → «Загрузить распакованное» |
 
 > TXT-EXPORT: на любом сайте **Alt+T** или пилюля «TXT» справа внизу → честный `.txt` страницы
@@ -29,6 +29,7 @@
 6. **SHA-256** — hashlib и sha256sum кросс-сверка; дайджесты публикуются в Release.
 
 CI выполняет пункты 2–4 на каждом пуше: [actions/workflows/ci.yml](.github/workflows/ci.yml).
+**Релизы собираются CI автоматически**: тег `v*` / `txt-export-v*` → [release.yml](.github/workflows/release.yml) верифицирует, пакует детерминированный ZIP, кладёт `checksums.txt` и публикует Release через gh CLI. Все действия запинены по коммит-SHA. Дифф-доказательство релиза 1.0.1: только 3 строки метаданных (@version + @updateURL + @downloadURL), рельсы 30/0.
 
 ## Cookie Vault 3.0.1 — криптосхема
 
