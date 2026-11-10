@@ -76,12 +76,13 @@ jobs:
             *) PR="" ;;
           esac
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
-            gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
-            echo "Релиз $TAG уже существовал — артефакты обновлены (clobber)"
-          else
-            gh release create "$TAG" dist/* $PR \
-              --repo "$GITHUB_REPOSITORY" \
-              --title "$TITLE" \
-              --notes "$NOTES"
-            echo "Релиз $TAG создан"
+            echo "::error::Релиз $TAG уже существует. Immutable releases включены: опубликованный релиз менять нельзя. Удалите релиз и тег и перевыставьте тег."
+            exit 1
           fi
+          # hardening 2026-11-10: релиз создаётся ОДНИМ вызовом со всеми
+          # артефактами (immutable-safe). После публикации релиз не меняется.
+          gh release create "$TAG" dist/* $PR \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "$TITLE" \
+            --notes "$NOTES"
+          echo "Релиз $TAG создан одним вызовом со всеми артефактами (immutable-safe)"
