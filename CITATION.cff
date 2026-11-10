@@ -5,3 +5,4 @@ abstract: "UACE x PML — POLYMAT UNIFIED userscripts + Cookie Vault MV3 extensi
 authors:
   - name: "Полимат-Универсум (rtynbirf)"
 repository-code: "https://github.com/rtynbirf/uace-polymat"
+license: "MIT"
