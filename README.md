@@ -1,5 +1,10 @@
 # UACE × PML — POLYMAT UNIFIED
 
+<div align="center">
+  <img src="banner.png" width="100%" alt="Штандарт uace-polymat: обсидиан и расплавленное золото, кузня rtynbirf" />
+</div>
+
+
 ![CI](https://github.com/rtynbirf/uace-polymat/actions/workflows/ci.yml/badge.svg)
 ![Release](https://img.shields.io/github/v/release/rtynbirf/uace-polymat)
 
