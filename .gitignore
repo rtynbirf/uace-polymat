@@ -1,0 +1,14 @@
+# Секреты и локальное — в репозиторий не попадает
+*.zip
+*.7z
+*.log
+.env
+.env.*
+*.pem
+*.key
+token*
+*token*
+.DS_Store
+Thumbs.db
+node_modules/
+__pycache__/

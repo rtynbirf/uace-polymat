@@ -1,0 +1,104 @@
+UACE × PML — POLYMAT UNIFIED v34.4.0-BETA4 (БЕТА) — ПРОТОКОЛ ПРОВЕРКИ
+Дата упаковки: 2026-09-23 09:42 MSK
+
+АРТЕФАКТ
+  UACE-PML-POLYMAT-UNIFIED-v34.4.0-BETA4.user.js
+  размер: 665896 байт
+  SHA-256: 65a3782aaf2db86745a73ad0db30581f09a1a07dd34239e7caf2c919d9edc437
+
+СТАТУС: БЕТА-ЛИНИЯ (временный модуль «ЧЁРНЫЙ ЯЩИК» + фиксы аудита Qwen).
+Канон конвейера беты: каждая бета перезапирается за актуальным stable.
+База поднята v34.3.1 → v34.3.2 «ЖИВЫЕ КНОПКИ» (поле владельца 2026-09-23:
+живые стили экспорта — все 5 палитр в каждом файле; «ИМПЕРСКИЙ С ЗОЛОТОМ» =
+чёрный OLED #000000 + золото по APCA-замеру; «ВСЕ ЧАТЫ В АРХИВ» — bulk-обход
+сайдбара реальным скроллом + SPA-клики + маркер-возобновление). BB-механика
+перенесена БЕЗ изменений; фиксы Qwen перезаперты на новой базе; FIX 6b:
+colRef определён локально в ecaXlsxSheet (латентный баг BETA3, вскрыт
+bulk-E2E рельсой test_bulk_zai).
+
+СБОРКА (воспроизводимо)
+  Проба якорей: scripts/probe_b3_anchors.py — 32/36 якорей BETA2 живы на
+  v34.3.1; переанкерованы только метаданные (M1 титул, M2 хроника, M3
+  @version, M5 UACE_VER, M4 @description, справка §6). Сборщик:
+  scripts/build_v3440b4.py (деривирован из build_v3440b3.py) — 36 якорных
+  замен «ровно 1 вхождение» + 34 контроли (в т.ч. целостность базы 34.3.2:
+  все 5 палитр вшиты, имперский = #000000, коричневого нет, кнопка «ВСЕ
+  ЧАТЫ В АРХИВ», bulk-маркер uaice_bulk_v1, SPA-клики; SHADOW_CLIP_WEIGHT,
+  superContainerFilter, trailingEmptyFilter, aria-controls).
+
+ПРОВЕРКИ (фактические запуски, сессия 2026-09-23)
+  1. node --check                          → PASS
+  2. node test_core_smoke.js               → CORE SMOKE: 23 PASS / 0 FAIL
+  3. node test_jsdom_integration.js        → JSDOM INTEGRATION: 27 PASS / 0 FAIL
+  4. node test_fold_button.js              → FOLD+ГЕОМЕТРИЯ: 44 PASS / 0 FAIL
+  5. node test_aria.js                     → ARIA WCAG 2.2: 39 PASS / 0 FAIL
+     (база v34.3.0 под BB цела: связки, roving tabindex, стрелки)
+  6. node test_qwen37.js                   → QWEN37: 39 PASS / 0 FAIL
+     (захват v34.3.1 не задет; assert версии переведён на регекс
+      stable|beta — тест принимает обе линии, прогнан и на v34.3.1)
+  7. node test_capture_hygiene.js          → CAPTURE-HYGIENE: 29 PASS / 0 FAIL
+  8. node test_backup.js                   → BACKUP: 20 PASS / 0 FAIL
+     (изоляция uaice_bb_v1 от whitelist бэкапа подтверждена на новой базе)
+  9. node test_ergo.js                     → ERGO: 36 PASS / 0 FAIL
+ 10. node test_bb_blackbox.js              → ЧЁРНЫЙ ЯЩИК: 31 PASS / 0 FAIL
+     (действия пишутся; window.error пойман; дедуп 3×<1200мс → ×3; персист;
+     exportJSON kind uace-blackbox/2; очистка; вкл/выкл; uaice_bb_v1 ВНЕ
+     whitelist бэкапа; 0 сети; push не вызывает journal — без рекурсии;
+     prev-хвост; pagehide; UI «Журнала»)
+ 11. node test_psp_fixes.js                → ФИКСЫ QWEN: 20 PASS / 0 FAIL
+     (FIX 1 oklch-регистр; FIX 2 parsedRules; FIX 3/4 специфичность a/b/c +
+     теги составных селекторов, векторы; APCA SSEA vs PSP-1 эквивалентны:
+     #000/#FFF −106.05, #FFF/#000 +107.89, 20 серых пар знаки/модуль ≤0.05;
+     FIX 6 XLSX r="A1"/r="B1", строки r="1..3")
+     FIX 6b colRef локально (bulk-E2E вскрыл ReferenceError BETA3)
+     + НОВЫЕ РЕЛЬСЫ ЖИВЫХ КНОПОК: test_tplbar 27 PASS / 0 FAIL (5 палитр
+      в файле, CSSOM-переключение, чёрный имперский, APCA ≥75 на чёрном);
+      test_bulk_zai 22 PASS / 0 FAIL (полигон chat.z.ai: честный отказ при
+      пустом сайдбаре; обход 3 чатов SPA-кликами → ОДИН ZIP с manifest/
+      SHA256SUMS/coverage; возобновление с восстановлением документов;
+      кнопка честной отмены; 0 сети)
+  ИТОГО РЕЛЬСЫ: 357 PASS / 0 FAIL на v34.4.0-BETA4 (12 сюит)
+
+ 12. НАСТОЯЩИЙ Chromium (стенд :8077, реальные мышь/клавиатура CDP, лог
+     scripts/verify_3440b3.log):
+     0. Свежая сессия; контекст eval проконтролирован (урок: после close
+        первый open может отдать about:blank — двойная навигация).
+     A. Загрузка: BB API полный (7 методов), boot-событие «панель
+        смонтирована · UACE 34.4.0-BETA3», 7 вкладок, prev-хвост прошлой
+        сессии подхвачен (prev: 4 — криминалистика живая).
+     B. ARIA-база v34.3.0 под BB: roving tabindex — ровно 1 tab-stop,
+        реальная ArrowRight → вкладка export → pml.
+     C. Действия пишутся: fold/unfold, тема dark (count 8).
+     D. РЕАЛЬНЫЙ сбой (throw bb-live-test-err) → пойман с деталями
+        (Uncaught Error @ :1), моментальный персист в uaice_bb_v1.
+     E. Вкладка «Журнал»: «ЧЁРНЫЙ ЯЩИК (beta): событий 9/400 · дедуп ×0 ·
+        запись ВКЛ · prev прошлой сессии: 4»; кнопки BB: Скопировать/
+        Очистить, переключатель «Запись BB». Улика preview/panel-3440b4-1-journal-bb.png.
+     F. «BB: Скопировать» → JSON uace-blackbox/2 (1816 байт) через
+        clipboard-канал (перехват writeText) — 0 сети доказано.
+     G. «Запись BB» ВЫКЛ → клики не пишутся; ВКЛ → пишутся.
+     H. Очистка → count 0; тост «Ящик очищен» на улике пилюли.
+     I. Пилюля цела: fold → 95px, глиф «▸»; aria-controls ×8
+        (7 вкладок v34.3.0 + btnFold) — база не задета.
+     J. Дельта ошибок страницы: 0 → 1 (только намеренный бросок).
+     Скрины: preview/panel-3440b3-1-journal-bb.png, panel-3440b4-1-journal-bb.png,
+     panel-3440b3-2-folded-pill.png.
+
+ЧТО ВНУТРИ v34.4.0-BETA4
+  (1) ЧЁРНЫЙ ЯЩИК (L0.1b, временный beta-модуль) — без изменений с BETA2:
+  кольцевой буфер 400 событий в GM-хранилище (uaice_bb_v1 + зеркало
+  localStorage, ВНЕ whitelist бэкапа v33 — изоляция), 21 точка сбора
+  [BB], зеркала journal.warn/error/security без рекурсии, ловушки
+  window.error + unhandledrejection, дедуп <1200 мс, prev-хвост 60,
+  flush при error/pagehide + троттл 5 с, UI в «Журнале»,
+  API window.__UACE_BB, 0 сети (clipboard/file only).
+  (2) Фиксы аудита Qwen, перезапертые на базе v34.3.1: БАГ 1 (oklch
+  регистр), БАГ 2 (parsedRules), БАГ 3 (specificity a/b/c), БАГ 4 (теги
+  составных селекторов), БАГ 6 (ECA-XLSX r="A1"/r="N"); БАГ 5 (APCA)
+  закрыт аналитически векторами. Попутно: mkCheck id.
+  (3) База v34.3.1 в полном составе: ARIA APG вкладок (v34.3.0),
+  ЧИСТЫЙ ЗАХВАТ-2 (v34.3.1: супер-контейнеры, пустой хвост, ECA shape-
+  rescue, render-бокс, SHADOW_CLIP_WEIGHT=0.2, findLogTick дедуп,
+  канонический XLSX styles.xml).
+
+ЦЕЛЕВАЯ БАЗА: v34.3.1 (production). ПРОДАКШЕН НЕ ТРОНУТ — канон двух линий.

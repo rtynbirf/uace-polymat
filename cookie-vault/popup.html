@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cookie Vault</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { width: 340px; margin: 0; font: 13px/1.45 system-ui, sans-serif; background: #0b1220; color: #e2e8f0; }
+  header { padding: 12px 14px 8px; border-bottom: 1px solid #1e293b; display: flex; align-items: baseline; gap: 8px; }
+  header h1 { font-size: 15px; margin: 0; color: #5eead4; }
+  header .ver { color: #64748b; font-size: 11px; }
+  main { padding: 12px 14px 14px; }
+  .box { border: 1px solid #1e293b; border-radius: 8px; padding: 8px 10px; margin: 0 0 10px; background: #0f172a; white-space: pre-line; }
+  .box.ok { border-color: #134e4a; color: #99f6e4; }
+  .box.err { border-color: #7f1d1d; color: #fecaca; }
+  label { display: block; font-size: 11px; color: #94a3b8; margin: 8px 0 4px; text-transform: uppercase; letter-spacing: .04em; }
+  input[type=password] { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #334155; background: #0b1220; color: #e2e8f0; }
+  .row { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+  .row label.mode { display: flex; gap: 6px; align-items: center; text-transform: none; letter-spacing: 0; font-size: 12px; color: #cbd5e1; margin: 0; }
+  button { flex: 1; padding: 9px 8px; border-radius: 8px; border: 1px solid #334155; background: #134e4a; color: #ccfbf1; font-weight: 600; cursor: pointer; }
+  button:hover { filter: brightness(1.15); }
+  button.secondary { background: #1e293b; color: #e2e8f0; font-weight: 500; }
+  button.danger { background: #450a0a; border-color: #7f1d1d; color: #fecaca; }
+  .meta { font-size: 11px; color: #94a3b8; }
+  footer { padding: 0 14px 12px; color: #475569; font-size: 10px; }
+</style>
+</head>
+<body>
+<header><h1>Cookie Vault</h1><span class="ver">3.0.1</span></header>
+<main>
+  <div id="status" class="box">Загрузка статуса…</div>
+  <div id="meta" class="box meta">—</div>
+  <label for="pin">PIN (минимум 4 символа)</label>
+  <input id="pin" type="password" autocomplete="off" placeholder="••••••">
+  <div class="row">
+    <button id="btn-export" type="button">Снимок (экспорт)</button>
+    <button id="btn-restore" type="button">Восстановить</button>
+  </div>
+  <div class="row">
+    <label class="mode"><input type="radio" name="mode" value="merge" checked> слияние</label>
+    <label class="mode"><input type="radio" name="mode" value="replace"> заменить всё</label>
+  </div>
+  <div class="row">
+    <button id="btn-verify" type="button" class="secondary">Проверить PIN</button>
+    <button id="btn-wipe" type="button" class="danger">Стереть хранилище</button>
+  </div>
+</main>
+<footer>0 сетевых запросов · AES-256-GCM · PBKDF2-SHA256 600 000</footer>
+<script src="popup.js"></script>
+</body>
+</html>

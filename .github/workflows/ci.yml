@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: SYNTAX — userscripts (node --check)
+        run: |
+          set -e
+          for f in userscripts/*.user.js; do
+            node --check "$f"
+            echo "SYNTAX OK: $f"
+          done
+
+      - name: SYNTAX — Cookie Vault JS (node --check)
+        run: |
+          set -e
+          for f in cookie-vault/*.js; do
+            node --check "$f"
+            echo "SYNTAX OK: $f"
+          done
+          node --check cookie-vault/scripts/crypto_smoke.mjs
+          echo "SYNTAX OK: cookie-vault/scripts/crypto_smoke.mjs"
+
+      - name: STATIC — Cookie Vault validator (73 checks)
+        run: python cookie-vault/scripts/validate.py
+
+      - name: CRYPTO — WebCrypto smoke-test (8 tests)
+        run: node cookie-vault/scripts/crypto_smoke.mjs
+
+      - name: MANIFEST — MV3 canon assert
+        run: |
+          python3 - <<'PY'
+          import json
+          man = json.load(open('cookie-vault/manifest.json'))
+          assert man['manifest_version'] == 3, 'manifest_version must be 3'
+          assert man['background'].get('type') == 'module', 'service worker must be ES-module'
+          assert man['minimum_chrome_version'] == '111'
+          assert not man.get('browser_action') and not man.get('background', {}).get('scripts'), 'MV2 leftovers'
+          print('MV3 CANON OK: manifest_version=3, SW type=module, Chrome>=111, zero V2 leftovers')
+          PY

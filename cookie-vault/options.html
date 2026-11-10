@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Cookie Vault — настройки</title>
+<style>
+  :root { color-scheme: dark; }
+  body { max-width: 640px; margin: 24px auto; padding: 0 16px; font: 14px/1.55 system-ui, sans-serif; background: #0b1220; color: #e2e8f0; }
+  h1 { font-size: 18px; color: #5eead4; }
+  h2 { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; margin-top: 28px; }
+  .card { border: 1px solid #1e293b; border-radius: 10px; padding: 14px 16px; background: #0f172a; margin: 10px 0; }
+  .card label { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+  select, button { padding: 7px 10px; border-radius: 8px; border: 1px solid #334155; background: #134e4a; color: #ccfbf1; font-weight: 600; cursor: pointer; }
+  select { background: #0b1220; color: #e2e8f0; font-weight: 400; }
+  button.secondary { background: #1e293b; color: #e2e8f0; font-weight: 500; }
+  #out { font-size: 12px; color: #94a3b8; white-space: pre-line; margin-top: 10px; }
+  .fine { color: #64748b; font-size: 12px; }
+</style>
+</head>
+<body>
+<h1>Cookie Vault 3.0.1 — настройки</h1>
+
+<h2>Поведение</h2>
+<div class="card">
+  <label><input type="checkbox" id="confirm-destructive"> Спрашивать подтверждение на опасных действиях (замена cookies, стирание)</label>
+  <label>Режим восстановления по умолчанию:
+    <select id="import-mode">
+      <option value="merge">слияние</option>
+      <option value="replace">заменить всё</option>
+    </select>
+  </label>
+</div>
+
+<h2>Обслуживание</h2>
+<div class="card">
+  <button id="btn-housekeeping" type="button" class="secondary">Проверить целостность записи хранилища</button>
+  <div id="out"></div>
+</div>
+
+<h2>О криптографии</h2>
+<div class="card fine">
+  PIN → ключ: PBKDF2-SHA256, 600 000 итераций, соль 16 байт (свежая на каждый экспорт).<br>
+  Шифрование: AES-256-GCM, IV 12 байт, AAD «COOKIE-VAULT-V1».<br>
+  Неверный PIN → отказ расшифровки (аутентификация GCM). Отпечаток PIN: PBKDF2 с фиксированной доменной солью — позволяет проверить PIN без расшифровки, не является секретом.<br>
+  Сеть: расширение не выполняет ни одного сетевого запроса. Все данные остаются в chrome.storage.local.
+</div>
+
+<script src="options.js"></script>
+</body>
+</html>
