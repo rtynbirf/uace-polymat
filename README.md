@@ -1,7 +1,7 @@
-# UACE × PML — POLYMAT UNIFIED
-
 <div align="center">
-  <img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace-polymat@main/banner.png" width="100%" alt="Штандарт uace-polymat: обсидиан и расплавленное золото, кузня rtynbirf" />
+
+<a href="https://github.com/rtynbirf/uace-polymat"><img src="banner.png" width="100%" alt="uace-polymat — штандарт мастерской в каноне ORNAMENTAL MYTHO-REALISM"></a>
+
 </div>
 
 <!--ФОРЖ:МУЗА:НАЧАЛО-->
@@ -14,13 +14,25 @@
 
 <!--ФОРЖ:ПАСПОРТ:НАЧАЛО-->
 <div align="center">
-  <img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace-polymat@main/revo-page.svg" width="100%" alt="РЕВО-паспорт страницы uace-polymat: строение файлов, лексикон, числа — по фактическому контенту" />
+  <img src="revo-page.svg" width="100%" alt="РЕВО-паспорт страницы uace-polymat №57 в каноне ORNAMENTAL MYTHO-REALISM: орнаментальная решётка, медальон-миф, строение файлов, лексикон — по фактическому контенту" />
 </div>
 
 | ФАЙЛОВ | ПАПОК | КОММИТОВ | ОБНОВЛЕНО | РЕЛИЗОВ |
 |---:|---:|---:|---|---:|
-| 53 | 9 | 25 | 2026-11-16 | 4 |
+| 64 | 11 | 1 | 2026-11-28 | 4 |
 <!--ФОРЖ:ПАСПОРТ:КОНЕЦ-->
+
+# UACE × PML — POLYMAT UNIFIED
+
+<p align="center"><img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace-polymat@main/.github/social-preview.png" alt="uace-polymat" width="100%"></p>
+
+<div align="center">
+  <img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace-polymat@main/banner.png" width="100%" alt="Штандарт uace-polymat: обсидиан и расплавленное золото, кузня rtynbirf" />
+</div>
+
+
+
+
 
 
 
