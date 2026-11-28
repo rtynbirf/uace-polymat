@@ -22,6 +22,18 @@
 | 64 | 11 | 1 | 2026-11-28 | 4 |
 <!--ФОРЖ:ПАСПОРТ:КОНЕЦ-->
 
+# uace-polymat
+
+<div align="center">
+
+<a href="https://github.com/rtynbirf/uace-polymat"><img src="banner.png" width="100%" alt="uace-polymat — штандарт мастерской в каноне ORNAMENTAL MYTHO-REALISM"></a>
+
+</div>
+
+
+
+
+
 # UACE × PML — POLYMAT UNIFIED
 
 <p align="center"><img src="https://cdn.jsdelivr.net/gh/rtynbirf/uace-polymat@main/.github/social-preview.png" alt="uace-polymat" width="100%"></p>
